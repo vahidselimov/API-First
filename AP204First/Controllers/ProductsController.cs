@@ -40,10 +40,10 @@ namespace AP204First.Controllers
         [HttpPost("Create")]
         public IActionResult Create(Products products)
         {
-            if (products.Name.Length>5)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, new { title = "...." });
-            }
+            //if (products.Name.Length>5)
+            //{
+            //    return StatusCode(StatusCodes.Status400BadRequest, new { title = "...." });
+            //}
             context.Products.Add(products);
             context.SaveChanges();
             return Ok(products);
@@ -65,6 +65,31 @@ namespace AP204First.Controllers
             Products products1 = context.Products.Find(Id);  
             context.Products.Remove(products1); 
             return Ok(products1);
+        }
+        [HttpPatch("status/{id}")]
+        public IActionResult ChangeDisplayStatus(int id,string statusStr)
+        {
+            Products products = context.Products.Find(id); 
+            if (products==null) return NotFound();
+
+            products.DisplayStatus = true;
+            bool status;
+
+           bool result=bool.TryParse(statusStr,out status);   
+            if (!result) return NotFound();
+            products.DisplayStatus = status;
+            return Ok();
+
+
+
+
+        }
+        [HttpGet()]
+        public IActionResult Change()
+        {
+            List<Products>products=context.Products.ToList();
+            products.ForEach(p =>p.DisplayStatus = true);  
+            return Ok();
         }
 
 
